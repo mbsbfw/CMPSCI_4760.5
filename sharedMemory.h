@@ -42,8 +42,8 @@ typedef struct{
 //meassage queue struct
 struct msgBuffer{
 	long msgType;
-	char msgText;
-}mess;
+	char msgText[100];
+}message;
 
 /* ALL MY GLOBES */
 int sCshmid;
@@ -55,6 +55,7 @@ int pidHolder[18] = {};
 int randomClock[18] = {};
 int blockedQueue[18] = {};
 int requestTimeReached = 0;
+int msgqid;
 
 //allocate shared memory
 void getSharedMemory(){
@@ -90,8 +91,6 @@ void getSharedMemory(){
 }//end getShared
 
 void messageQueueConfig(){
-
-	int msgqid;
 
 	msgqid = msgget(IPC_PRIVATE, 0666 | IPC_CREAT);
 }

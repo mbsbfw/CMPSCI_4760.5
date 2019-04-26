@@ -15,7 +15,6 @@
 
 #include "sharedMemory.h"
 
-
 int main(int argc, char* argv[]){
 	
 	getSharedMemory();
@@ -29,7 +28,7 @@ int main(int argc, char* argv[]){
 
 	timeInc = atoi(argv[0]);
 	
-	printf("We are in user %d %d\n", getpid(), timeInc);
+	//printf("We are in user %d %d\n", getpid(), timeInc);
 
 	if((nanoSecs + timeInc) > 999999999){
 		remainder = (nanoSecs + timeInc) - 999999999;
@@ -38,5 +37,20 @@ int main(int argc, char* argv[]){
 	}else {
 		nanoSecs += timeInc;
 	}
-return 0;
+
+	while(requestTimeReached == 0){
+		if(sysClock_ptr->seconds >= seconds && sysClock_ptr->nanoSecs>= nanoSecs){
+			sprintf(message.msgText, "%d", getpid());
+
+			message.msgType = 1;
+
+			msgsnd(msgqid, &message, sizeof(message), 0);
+
+			requestTimeReached = 1;
+		}//end if
+	}//end while
+
+	shmdt(sysClock_ptr);
+	shmdt(resDes_ptr);
+	exit (0);
 }//end main
